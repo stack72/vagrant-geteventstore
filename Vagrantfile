@@ -1,4 +1,4 @@
-Vagrant::Config.run do |config|
+Vagrant.configure("2") do |config|
     config.vm.box = "Ubuntu precise 64 VMWare"
     config.vm.box_url = "http://files.vagrantup.com/precise64_vmware.box"
 
@@ -6,10 +6,13 @@ Vagrant::Config.run do |config|
     for i in 1..1    
     ip = count + 10
     config.vm.define "eventstore#{i}" do |eventstore|
-        eventstore.vm.network :hostonly, "192.168.50.#{ip}"
-        eventstore.vm.provision "shell", inline: "sudo apt-get update"
-        eventstore.vm.provision "shell", inline: "wget http://download.geteventstore.com/binaries/eventstore-mono-2.0.1.tgz"
-        eventstore.vm.provision "shell", inline: "tar -xvzf eventstore-mono-2.0.1.tgz"
+        eventstore.vm.network "private_network", ip: "192.168.50.#{ip}"
+        eventstore.vm.network :forwarded_port, guest: 2311, host: 2311
+        #eventstore.vm.provision "shell", inline: "sudo apt-get update"
+        eventstore.vm.provision "shell", inline: "wget http://ha.geteventstore.com/showcase/EventStore-Mono-2.5.0RC1.tar.gz"
+        eventstore.vm.provision "shell", inline: "tar -xvzf EventStore-Mono-2.5.0RC1.tar.gz"
+        eventstore.vm.provision "shell", inline: "cd EventStore-Mono-2.5.0RC1"
+        eventstore.vm.provision "shell", inline: "./Singlenode.sh"
     end
     end
 end 
