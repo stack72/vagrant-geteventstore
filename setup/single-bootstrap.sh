@@ -14,4 +14,4 @@ fi
 
 cd EventStore-Mono-v2.5.0rc4/
 
-./singlenode&
+./run-singlenode.sh &
